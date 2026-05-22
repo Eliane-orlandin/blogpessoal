@@ -12,15 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
 
-@RestController
-@RequestMapping("/postagens")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+// Anotações: alterar e/ou definir comportamentod
+
+@RestController                  // indica que a classe é uma Controller (Recebe requisições e Responde)
+@RequestMapping("/postagens")    // indica que as requisições do endpoint "/postagem" serão tratadas por esse controller
+@CrossOrigin(origins = "*", allowedHeaders = "*")  // Permite essa controler receba reuisições libera o acesso a qualquer Frontend
 public class PostagemController {
 
-	@Autowired
+	@Autowired // inversão de dependência/ controle 
 	private PostagemRepository postagemRepository;
 	
-	@GetMapping
+	// cria a classe repo | implementa o método de interface | instancia um objeto da classe repo
+	
+	@GetMapping // GET | POST | PUT | DELETE -> Todas as requisições do tipo GET vão ser executadas por esse método
 	public ResponseEntity<List<Postagem>> getAll() {
 		return ResponseEntity.ok(postagemRepository.findAll());
 	}
