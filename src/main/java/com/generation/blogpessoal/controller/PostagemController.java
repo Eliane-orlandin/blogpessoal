@@ -16,26 +16,34 @@ import com.generation.blogpessoal.repository.PostagemRepository;
 
 // Anotações: alterar e/ou definir comportamentod
 
-@RestController                  // indica que a classe é uma Controller (Recebe requisições e Responde)
-@RequestMapping("/postagens")    // indica que as requisições do endpoint "/postagem" serão tratadas por esse controller
-@CrossOrigin(origins = "*", allowedHeaders = "*")  // Permite essa controler receba reuisições libera o acesso a qualquer Frontend
+@RestController // indica que a classe é uma Controller (Recebe requisições e Responde)
+@RequestMapping("/postagens") // indica que as requisições do endpoint "/postagem" serão tratadas por esse
+								// controller
+@CrossOrigin(origins = "*", allowedHeaders = "*") // Permite essa controler receba reuisições libera o acesso a qualquer
+													// Frontend
 public class PostagemController {
 
-	@Autowired // inversão de dependência/ controle 
+	@Autowired // inversão de dependência/ controle
 	private PostagemRepository postagemRepository;
-	
-	// cria a classe repo | implementa o método de interface | instancia um objeto da classe repo
-	
-	@GetMapping // GET | POST | PUT | DELETE -> Todas as requisições do tipo GET vão ser executadas por esse método
+
+	// cria a classe repo | implementa o método de interface | instancia um objeto
+	// da classe repo
+
+	@GetMapping // GET | POST | PUT | DELETE -> Todas as requisições do tipo GET vão ser
+				// executadas por esse método
 	public ResponseEntity<List<Postagem>> getAll() {
 		return ResponseEntity.ok(postagemRepository.findAll());
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<Postagem> getById(@PathVariable Long id){
-		return postagemRepository.findById(id)
-				.map(resp -> ResponseEntity.ok(resp))
+	public ResponseEntity<Postagem> getById(@PathVariable Long id) {
+		return postagemRepository.findById(id).map(resp -> ResponseEntity.ok(resp))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+	}
+
+	@GetMapping("/titulo/{titulo}")
+	public ResponseEntity<List<Postagem>> getByTitulo(@PathVariable String titulo) {
+		return ResponseEntity.ok(postagemRepository.findAllByTituloContainingIgnoreCase(titulo));
 	}
 
 }
