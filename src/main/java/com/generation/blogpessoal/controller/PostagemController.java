@@ -25,59 +25,64 @@ import jakarta.validation.Valid;
 
 // Anotações: alterar e/ou definir comportamentod
 
-@RestController // indica que a classe é uma Controller (Recebe requisições e Responde)
-@RequestMapping("/postagens") // indica que as requisições do endpoint "/postagem" serão tratadas por esse
-								// controller
-@CrossOrigin(origins = "*", allowedHeaders = "*") // Permite essa controler receba reuisições libera o acesso a qualquer
-													// Frontend
+@RestController // Indica que a classe é uma Controller (Recebe requisições REST e envia Respostas)
+@RequestMapping("/postagens") // Define o endereço (endpoint) base para as requisições desta classe esse
+
+// Configurando o CORS
+// @CrossOrigin(origins = "https://meufrontend.com", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*") // Permite que qualquer aplicação frontend (React, Angular, Vue, etc.) acesse este endpoint.
+												  // Em produção, substitua "*" pelo domínio específico do seu frontend para evitar acessos não autorizados e reduzir riscos de injeção de dados.
+
 public class PostagemController {
 
-	@Autowired // inversão de dependência/ controle
+	@Autowired // Injeção de Dependência: O Spring cria e gerencia o objeto do Repositório automaticamente
 	private PostagemRepository postagemRepository;
 
-	// cria a classe repo | implementa o método de interface | instancia um objeto
-	// da classe repo
 
-	@GetMapping // GET | POST | PUT | DELETE -> Todas as requisições do tipo GET vão ser
-				// executadas por esse método
+	@GetMapping // Mapeia requisições do tipo GET (Leitura/Busca de dados)
 	public ResponseEntity<List<Postagem>> getAll() {
+		// Retorna a lista com todas as postagens e o status HTTP 200 (OK)
 		return ResponseEntity.ok(postagemRepository.findAll());
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/{id}") // O {id} indica que um valor será passado pela URL (ex: /postagens/1)
 	public ResponseEntity<Postagem> getById(@PathVariable Long id) {
+		// @PathVariable captura o {id} da URL. Retorna 200 (OK) se achar, ou 404 (Not Found) se não achar.
 		return postagemRepository.findById(id).map(resp -> ResponseEntity.ok(resp))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
 	@GetMapping("/titulo/{titulo}")
 	public ResponseEntity<List<Postagem>> getByTitulo(@PathVariable String titulo) {
+		// Retorna a lista de postagens que contenham o texto pesquisado no título
 		return ResponseEntity.ok(postagemRepository.findAllByTituloContainingIgnoreCase(titulo));
 	}
 
-	@PostMapping
+	@PostMapping // Mapeia requisições do tipo POST (Criação de novos dados)
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
-
-		postagem.setId(null);
-
+		// @Valid: Executa as validações da Model. @RequestBody: Pega os dados enviados no corpo da requisição (JSON)
+		postagem.setId(null); // Garante que o ID será gerado pelo banco (evita atualizar um registro sem querer)
+		// Salva no banco e retorna status 201 (Created)
 		return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
 	}
 
-	@PutMapping
+	@PutMapping // Mapeia requisições do tipo PUT (Atualização de dados existentes)
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
+		// Verifica se o ID enviado existe no banco antes de atualizar. 
+		// Retorna 200 (OK) atualizado ou 404 se o ID não for encontrado.
 		return postagemRepository.findById(postagem.getId())
 				.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT) // Força o retorno do status 204 (Sem conteúdo) em caso de sucesso
+	@DeleteMapping("/{id}") // Mapeia requisições do tipo DELETE
 	public void delete(@PathVariable Long id) {
 		Optional<Postagem> postagem = postagemRepository.findById(id);
-
+		// Se não achar o ID no banco, lança uma exceção com erro 404 (Not Found)
 		if (postagem.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
+		// Se achar, deleta a postagem
 		postagemRepository.deleteById(id);
 	}
 
