@@ -12,32 +12,30 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-// anotaçoes: alterar ou definir comportamentod
+// Anotações: servem para alterar ou definir o comportamento da classe/atributos 
 
-@Entity // Definindo que a classe Postagem vai se tornar uma tabela
-@Table(name = "tb_postagens") // Definir o nome da tbela seguindo a nossa nomeclatua
+@Entity // Define que esta classe vai se tornar uma tabela no Banco de Dados
+@Table(name = "tb_postagens") // Define o nome da tabela no Banco de Dados
 public class Postagem {
 
-	@Id // Defini chave primária
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // Defini que o campo é preenchido pelo banco de daados por ser
-														// autoincrement
+	@Id // Define que este atributo é a Chave Primária (Primary Key)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // Define que o valor será gerado pelo banco de dados (Auto-Incremento)
 	private Long id;
 
-	@NotBlank(message = "O atributo título é obrigatório!")
-	@Size(min = 5, max = 100, message = "O atributo título deve ter no minimo 5 e no máximo 100 caracteres.")
+	@NotBlank(message = "O atributo título é obrigatório!") // Não permite valores nulos ou vazios
+	@Size(min = 5, max = 100, message = "O atributo título deve ter no minimo 5 e no máximo 100 caracteres.") // Limita o tamanho do texto
 	private String titulo;
 
-	// titulo varchar(100) NOT NULL | ["titulo"]
-
+	
 	@NotBlank(message = "O atributo texto é obrigatório!")
 	@Size(min = 10, max = 1000, message = "O atributo texto deve ter no minimo 10 e no máximo 1000 caracteres.")
 	private String texto;
 
-	// texto varchar(1000) NOT NULL | ["texto..."]
-
-	@UpdateTimestamp // BD preenche esse campo e atualiza
+	@UpdateTimestamp // O Banco de Dados preenche e atualiza a data/hora automaticamente a cada modificação
 	private LocalDateTime data;
 
+	// --- Getters e Setters (Métodos para acessar e modificar os atributos privados) ---
+	
 	public Long getId() {
 		return id;
 	}
