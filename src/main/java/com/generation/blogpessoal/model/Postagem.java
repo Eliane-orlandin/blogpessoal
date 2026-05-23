@@ -14,25 +14,26 @@ import jakarta.validation.constraints.Size;
 
 // anotaçoes: alterar ou definir comportamentod
 
-@Entity //Definindo que a classe Postagem vai se tornar uma tabela
+@Entity // Definindo que a classe Postagem vai se tornar uma tabela
 @Table(name = "tb_postagens") // Definir o nome da tbela seguindo a nossa nomeclatua
 public class Postagem {
 
-	@Id // Defini  chave primária
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // Defini que o campo é preenchido pelo banco de daados por ser autoincrement
+	@Id // Defini chave primária
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // Defini que o campo é preenchido pelo banco de daados por ser
+														// autoincrement
 	private Long id;
 
 	@NotBlank(message = "O atributo título é obrigatório!")
 	@Size(min = 5, max = 100, message = "O atributo título deve ter no minimo 5 e no máximo 100 caracteres.")
 	private String titulo;
-	
-	// titulo varchar(100) NOT NULL  | ["titulo"]
+
+	// titulo varchar(100) NOT NULL | ["titulo"]
 
 	@NotBlank(message = "O atributo texto é obrigatório!")
 	@Size(min = 10, max = 1000, message = "O atributo texto deve ter no minimo 10 e no máximo 1000 caracteres.")
 	private String texto;
-	
-	// texto varchar(1000) NOT NULL  | ["texto..."]
+
+	// texto varchar(1000) NOT NULL | ["texto..."]
 
 	@UpdateTimestamp // BD preenche esse campo e atualiza
 	private LocalDateTime data;
@@ -68,6 +69,5 @@ public class Postagem {
 	public void setData(LocalDateTime data) {
 		this.data = data;
 	}
-	
-	
+
 }
