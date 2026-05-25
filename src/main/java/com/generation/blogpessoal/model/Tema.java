@@ -34,8 +34,7 @@ public class Tema {
 	@JsonIgnoreProperties(value = "tema", allowSetters = true) // Evita o loop infinito no JSON.
 	private List<Postagem> postagem;
 
-	// --- Getters e Setters (Métodos para acessar e modificar os atributos
-	// privados) ---
+	// --- Getters e Setters (Métodos para acessar e modificar os atributos privados) ---
 
 	public Long getId() {
 		return this.id;
