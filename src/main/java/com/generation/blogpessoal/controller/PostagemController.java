@@ -20,24 +20,31 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
+import com.generation.blogpessoal.repository.TemaRepository;
 
 import jakarta.validation.Valid;
 
-// Anotações: alterar e/ou definir comportamentod
+// Anotações: alterar e/ou definir comportamentos
 
-@RestController // Indica que a classe é uma Controller (Recebe requisições REST e envia Respostas)
+@RestController // Indica que a classe é uma Controller (Recebe requisições REST e envia
+				// Respostas)
 @RequestMapping("/postagens") // Define o endereço (endpoint) base para as requisições desta classe esse
 
 // Configurando o CORS
 // @CrossOrigin(origins = "https://meufrontend.com", allowedHeaders = "*")
-@CrossOrigin(origins = "*", allowedHeaders = "*") // Permite que qualquer aplicação frontend (React, Angular, Vue, etc.) acesse este endpoint.
-												  // Em produção, substitua "*" pelo domínio específico do seu frontend para evitar acessos não autorizados e reduzir riscos de injeção de dados.
+@CrossOrigin(origins = "*", allowedHeaders = "*") // Permite que qualquer aplicação frontend (React, Angular, Vue,
+													// etc.)acesse este endpoint.
+// Em produção, substitua "*" pelo domínio específico do seu frontend para evitar acessos não autorizados e reduzir riscos de injeção de dados.
 
 public class PostagemController {
 
-	@Autowired // Injeção de Dependência: O Spring cria e gerencia o objeto do Repositório automaticamente
+	@Autowired // Injeção de Dependência: O Spring cria e gerencia o objeto do Repositório
+				// automaticamente
 	private PostagemRepository postagemRepository;
 
+	@Autowired // Injeção de Dependência: O Spring cria e gerencia o objeto do Repositório
+				// automaticamente
+	private TemaRepository temaRepository;
 
 	@GetMapping // Mapeia requisições do tipo GET (Leitura/Busca de dados)
 	public ResponseEntity<List<Postagem>> getAll() {
@@ -47,7 +54,8 @@ public class PostagemController {
 
 	@GetMapping("/{id}") // O {id} indica que um valor será passado pela URL (ex: /postagens/1)
 	public ResponseEntity<Postagem> getById(@PathVariable Long id) {
-		// @PathVariable captura o {id} da URL. Retorna 200 (OK) se achar, ou 404 (Not Found) se não achar.
+		// @PathVariable captura o {id} da URL. Retorna 200 (OK) se achar, ou 404 (Not
+		// Found) se não achar.
 		return postagemRepository.findById(id).map(resp -> ResponseEntity.ok(resp))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
@@ -60,19 +68,37 @@ public class PostagemController {
 
 	@PostMapping // Mapeia requisições do tipo POST (Criação de novos dados)
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
-		// @Valid: Executa as validações da Model. @RequestBody: Pega os dados enviados no corpo da requisição (JSON)
-		postagem.setId(null); // Garante que o ID será gerado pelo banco (evita atualizar um registro sem querer)
-		// Salva no banco e retorna status 201 (Created)
-		return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+		// IF: Verifica se o ID do Tema associado à postagem realmente existe no banco
+		// de dados
+		if (temaRepository.existsById(postagem.getTema().getId())) {
+			postagem.setId(null); // Garante que o ID da postagem seja nulo para forçar a criação de um novo
+									// registro
+			return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+			// Salva a postagem vinculada ao tema e retorna o status 201 (Created)
+		}
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe!", null);
+		// ELSE: Se o ID do Tema não existir, interrompe a execução e lança um erro 400
+		// (Bad Request)
 	}
 
-	@PutMapping // Mapeia requisições do tipo PUT (Atualização de dados existentes)
+	@PutMapping // Mapeia requisições do tipo PUT para atualizar uma postagem existente
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
-		// Verifica se o ID enviado existe no banco antes de atualizar. 
-		// Retorna 200 (OK) atualizado ou 404 se o ID não for encontrado.
-		return postagemRepository.findById(postagem.getId())
-				.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)))
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+		// 1ª Validação: Verifica se a Postagem que você quer atualizar realmente existe
+		// no banco pelo ID
+		if (postagemRepository.existsById(postagem.getId())) {
+			// 2ª Validação: Verifica se o Tema associado a essa postagem também existe no
+			// banco
+			if (temaRepository.existsById(postagem.getTema().getId()))
+				// Se ambos existirem, salva as alterações e retorna status 200 (OK) com os
+				// dados atualizados
+				return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
+			// Se a postagem existe, mas o Tema não existe, lança erro 400 (Bad Request)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe!", null);
+
+		}
+
+		// Se a Postagem não for encontrada pelo ID, retorna status 404 (Not Found)
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT) // Força o retorno do status 204 (Sem conteúdo) em caso de sucesso
