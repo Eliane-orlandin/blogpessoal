@@ -38,8 +38,7 @@ import jakarta.validation.Valid;
 
 public class PostagemController {
 
-	@Autowired // Injeção de Dependência: O Spring cria e gerencia o objeto do Repositório
-				// automaticamente
+	@Autowired // Inversão de Dependência: Implementa a Inversão de Controle e Dependência gerenciada pelo Spring
 	private PostagemRepository postagemRepository;
 
 	@Autowired // Injeção de Dependência: O Spring cria e gerencia o objeto do Repositório
@@ -83,18 +82,16 @@ public class PostagemController {
 
 	@PutMapping // Mapeia requisições do tipo PUT para atualizar uma postagem existente
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
-		// 1ª Validação: Verifica se a Postagem que você quer atualizar realmente existe
-		// no banco pelo ID
+		
 		if (postagemRepository.existsById(postagem.getId())) {
-			// 2ª Validação: Verifica se o Tema associado a essa postagem também existe no
-			// banco
+			// 1ª Validação: Verifica se a Postagem que você quer atualizar realmente existe no banco pelo ID
 			if (temaRepository.existsById(postagem.getTema().getId()))
-				// Se ambos existirem, salva as alterações e retorna status 200 (OK) com os
-				// dados atualizados
+				// 2ª Validação: Verifica se o Tema associado a essa postagem também existe no
+				// banco
 				return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
-			// Se a postagem existe, mas o Tema não existe, lança erro 400 (Bad Request)
+			// Se ambos existirem, salva as alterações e retorna status 200 (OK) com os dados atualizados
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe!", null);
-
+			// Se a postagem existe, mas o Tema não existe, lança erro 400 (Bad Request)
 		}
 
 		// Se a Postagem não for encontrada pelo ID, retorna status 404 (Not Found)
