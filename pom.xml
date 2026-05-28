@@ -3,16 +3,12 @@
 	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<!-- Herda as configurações e versões padrão do Spring Boot -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.0.6</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-
-	<!-- Identificação e metadados do seu projeto -->
 	<groupId>com.generation</groupId>
 	<artifactId>blogpessoal</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -31,95 +27,71 @@
 		<tag />
 		<url />
 	</scm>
-
-	<!-- Configurações gerais (Define a versão 21 do Java) -->
 	<properties>
 		<java.version>21</java.version>
 	</properties>
-
-	<!-- Bibliotecas (pacotes) que o seu projeto precisa para funcionar -->
 	<dependencies>
-
-		<!-- Ferramenta para manipulação e comunicação com o Banco de Dados -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
-		<!-- Ferramenta para validação de dados (Ex: @NotBlank, @Size) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
-		<!-- Ferramenta para criação de APIs REST e requisições HTTP na Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
-
-		<!-- Atualiza o servidor automaticamente ao salvar o código (Live
-		Reload) -->
+		<!-- Adicionamos a Dependência - Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<!-- Dependências para Geração e Validação do Token JWT -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.12.6</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.12.6</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.12.6</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- Driver de conexão específico para o banco de dados MySQL -->
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-
-		<!-- Ferramentas para testes automatizados no Banco de Dados -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Ferramentas para testes automatizados das validações -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Ferramentas para testes automatizados das requisições Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Dependência Spring Security -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
 	</dependencies>
 
-	<!-- Dependências para Geração e Validação do Token JWT -->
-	<dependency>
-		<groupId>io.jsonwebtoken</groupId>
-		<artifactId>jjwt-api</artifactId>
-		<version>0.12.6</version>
-	</dependency>
-	<dependency>
-		<groupId>io.jsonwebtoken</groupId>
-		<artifactId>jjwt-impl</artifactId>
-		<version>0.12.6</version>
-	</dependency>
-	<dependency>
-		<groupId>io.jsonwebtoken</groupId>
-		<artifactId>jjwt-jackson</artifactId>
-		<version>0.12.6</version>
-	</dependency>
-
-	<!-- Plugin responsável por compilar, empacotar e rodar a aplicação Spring -->
 	<build>
 		<plugins>
 			<plugin>
