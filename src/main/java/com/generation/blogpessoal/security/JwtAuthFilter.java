@@ -21,13 +21,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/* Essa Classe funciona como um Filtro, agora todas as requições
+ * que forem feitas, serão passadas por essa classe para verificarmos
+ * e validarmos o Token JWT*/
+
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    @Autowired
+    @Autowired	// Inversão/Injeção de Dependência
     private JwtService jwtService;
 
-    @Autowired
+    @Autowired	// Inversão/Injeção de Dependência
     private UserDetailsServiceImpl userDetailsService;
 
     @Override
@@ -52,6 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
     }
 
+    // Método que extrai o Token do Cabeçalho Authorization da nossa Requisição
     private String extractTokenFromRequest(HttpServletRequest request) {
         
     	String authHeader = request.getHeader("Authorization");
@@ -63,6 +68,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return null;
     }
     
+    /* Método que utiliza os métodos da Classe de Serviço jwtService
+     * para assegurar que o Token que foi recebido é um token válido
+     * para ser usado na Autorização */
     private void processJwtAuthentication(HttpServletRequest request, String token) {
         
     	String username = jwtService.extractUsername(token);
